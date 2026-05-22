@@ -1,0 +1,26 @@
+[
+  {
+    "id": 1,
+    "title": "SPRAY MINTS",
+    "artistName": "Banshee",
+    "artistWallet": "0x0000000000000000000000000000000000000000",
+    "ticketMetadataURI": "greenfield://banshee-demo/metadata/spray-mints.json",
+    "greenfieldBucket": "banshee-demo",
+    "greenfieldObject": "music/spray-mints.mp3",
+    "greenfieldGroup": "spray-mints-ticket-holders",
+    "priceWei": "0",
+    "active": true
+  },
+  {
+    "id": 2,
+    "title": "TRACK 03",
+    "artistName": "Banshee",
+    "artistWallet": "0x0000000000000000000000000000000000000000",
+    "ticketMetadataURI": "greenfield://banshee-demo/metadata/track-03.json",
+    "greenfieldBucket": "banshee-demo",
+    "greenfieldObject": "music/track-03.mp3",
+    "greenfieldGroup": "track-03-ticket-holders",
+    "priceWei": "0",
+    "active": true
+  }
+]
