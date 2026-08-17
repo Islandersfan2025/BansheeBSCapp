@@ -44,7 +44,7 @@
 </head>
 <body>
 <div class="graffiti-bg"></div><div class="scanline"></div>
-<nav class="navbar navbar-expand-lg fixed-top site-nav"><div class="container-fluid px-3 px-lg-5"><a class="navbar-brand" href="#home">Banshee</a><button class="navbar-toggler bg-light" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu"><span class="navbar-toggler-icon"></span></button><div class="collapse navbar-collapse" id="navMenu"><ul class="navbar-nav ms-auto align-items-lg-center gap-lg-2"><li class="nav-item"><a class="nav-link" href="#launchpad">Explore</a></li><li class="nav-item"><a class="nav-link" href="#launchpad" onclick="setFilter('NEW')">New</a></li><li class="nav-item"><a class="nav-link" href="#launchpad" onclick="setFilter('TRENDING')">Trending</a></li><li class="nav-item"><a class="nav-link" href="#create">Launch</a></li><li class="nav-item"><a class="nav-link" href="#about">About</a></li><li class="nav-item mt-2 mt-lg-0"><span class="network-pill"><span class="network-dot"></span> BSC TESTNET</span></li><li class="nav-item mt-2 mt-lg-0"><a class="wallet-pill" href="#" id="walletButton" onclick="connectWallet();return false;">Connect Wallet</a></li></ul></div></div></nav>
+<nav class="navbar navbar-expand-lg fixed-top site-nav"><div class="container-fluid px-3 px-lg-5"><a class="navbar-brand" href="#home">Banshee</a><button class="navbar-toggler bg-light" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu"><span class="navbar-toggler-icon"></span></button><div class="collapse navbar-collapse" id="navMenu"><ul class="navbar-nav ms-auto align-items-lg-center gap-lg-2"><li class="nav-item"><a class="nav-link" href="#launchpad">Explore</a></li><li class="nav-item"><a class="nav-link" href="#launchpad" onclick="setFilter('NEW')">New</a></li><li class="nav-item"><a class="nav-link" href="#launchpad" onclick="setFilter('TRENDING')">Trending</a></li><li class="nav-item"><a class="nav-link" href="#create">Launch</a></li><li class="nav-item"><a class="nav-link" href="#about">About</a></li><li class="nav-item mt-2 mt-lg-0"><span class="network-pill"><span class="network-dot"></span> BOTCHAIN TESTNET</span></li><li class="nav-item mt-2 mt-lg-0"><a class="wallet-pill" href="#" id="walletButton" onclick="connectWallet();return false;">Connect Wallet</a></li></ul></div></div></nav>
 <header class="hero" id="home"><div class="container"><div class="hero-panel"><span class="hero-badge">// Music Marketplace powered by Banshee Hook</span><h1 class="hero-title"><span class="banshee">Banshee</span><span class="launch">Music</span></h1><div class="swipe"></div><p class="lead-copy">A fair-launch marketplace for tokenized songs, albums and tickets. Banshee AI verifies creators, ERC-1155 assets launch at a fixed price, then move into an open market where activity can generate artist royalties and Proof-of-Performance rewards.</p><div class="d-flex flex-wrap gap-3 mt-4"><button class="btn-spray" onclick="document.querySelector('#launchpad').scrollIntoView()">Explore Launches</button><button class="btn-outline-spray" onclick="document.querySelector('#create').scrollIntoView()">Launch an Asset</button></div></div></div></header>
 <section class="ticker"><div class="container"><div class="row g-0"><div class="col-6 col-lg-3 ticker-stat"><span class="ticker-label">Live launches</span><strong class="ticker-value" id="statLaunches">06</strong></div><div class="col-6 col-lg-3 ticker-stat"><span class="ticker-label">Music RWA volume</span><strong class="ticker-value" id="statVolume">$42.8K</strong></div><div class="col-6 col-lg-3 ticker-stat"><span class="ticker-label">Artist royalties</span><strong class="ticker-value" id="statRoyalties">$3.4K</strong></div><div class="col-6 col-lg-3 ticker-stat"><span class="ticker-label">Verified creators</span><strong class="ticker-value" id="statArtists">12</strong></div></div></div></section>
 <main>
@@ -57,12 +57,12 @@
 <div class="modal fade" id="tradeModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><div class="detail-hero"><small id="modalType" class="text-secondary"></small><h4 id="modalTitle" class="mb-0"></h4><small id="modalArtist"></small></div><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="row g-3"><div class="col-6"><div class="metric"><span>Price</span><strong id="modalPrice"></strong></div></div><div class="col-6"><div class="metric"><span>Status</span><strong id="modalState"></strong></div></div><div class="col-12"><label class="form-label">Quantity</label><input class="form-control" id="buyQuantity" type="number" value="1" min="1"></div><div class="col-12 small text-secondary" id="modalInfo"></div></div></div><div class="modal-footer"><button class="btn-outline-spray" data-bs-dismiss="modal">Close</button><button class="btn-spray" id="buyButton" onclick="buySelectedLaunch()">Buy ERC-1155</button></div></div></div></div>
 <script>
 const CONFIG={
-  chainId:97,
-  chainIdHex:'0x61',
-  chainName:'BNB Smart Chain Testnet',
-  rpcUrls:['https://bsc-testnet-dataseed.bnbchain.org'],
-  nativeCurrency:{name:'tBNB',symbol:'tBNB',decimals:18},
-  blockExplorerUrls:['https://testnet.bscscan.com'],
+  chainId:968,
+  chainIdHex:'0x3C8',
+  chainName:'BOT Chain Testnet',
+  rpcUrls:['https://rpc.bohr.life'],
+  nativeCurrency:{name:'BOT',symbol:'BOT',decimals:18},
+  blockExplorerUrls:['https://scan.bohr.life'],
   // Replace after DeployBansheeHook.s.sol succeeds:
   bansheeHook:'0x0000000000000000000000000000000000000000',
   backendBase:''
@@ -91,7 +91,7 @@ let launches=[
 ];
 function hasHook(){return CONFIG.bansheeHook.toLowerCase()!=='0x0000000000000000000000000000000000000000'}
 function showToast(m){toastPanel.textContent=m;toastPanel.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>toastPanel.classList.remove('show'),2200)}
-async function ensureChain(){if(!window.ethereum)throw new Error('MetaMask not found');const id=await window.ethereum.request({method:'eth_chainId'});if(id!==CONFIG.chainIdHex){try{await window.ethereum.request({method:'wallet_switchEthereumChain',params:[{chainId:CONFIG.chainIdHex}]})}catch(e){if(e.code===4902)await window.ethereum.request({method:'wallet_addEthereumChain',params:[CONFIG]});else throw e;}}}
+async function ensureChain(){if(!window.ethereum)throw new Error('MetaMask not found');const id=await window.ethereum.request({method:'eth_chainId'});if(id!==CONFIG.chainIdHex){try{await window.ethereum.request({method:'wallet_switchEthereumChain',params:[{chainId:CONFIG.chainIdHex}]})}catch(e){if(e.code===4902)await window.ethereum.request({method:'wallet_addEthereumChain',params:[{chainId:CONFIG.chainIdHex,chainName:CONFIG.chainName,rpcUrls:CONFIG.rpcUrls,nativeCurrency:CONFIG.nativeCurrency,blockExplorerUrls:CONFIG.blockExplorerUrls}]});else throw e;}}}
 async function connectWallet(){try{await ensureChain();provider=new ethers.BrowserProvider(window.ethereum);signer=await provider.getSigner();account=await signer.getAddress();document.getElementById('walletButton').textContent=`${account.slice(0,6)}...${account.slice(-4)}`;showToast('Wallet connected');if(hasHook())await loadChainLaunches();return account}catch(e){showToast(e.shortMessage||e.message||'Wallet connection failed');return null}}
 function setFilter(f){currentFilter=f;document.querySelectorAll('.filter-btn').forEach(b=>b.classList.toggle('active',b.dataset.filter===f));renderLaunches()}
 function matchesFilter(x){if(currentFilter==='ALL'||currentFilter==='NEW'||currentFilter==='TRENDING')return true;if(currentFilter==='FAIR')return x.state==='FAIR LAUNCH';if(currentFilter==='ACTIVE')return x.state==='OPEN MARKET';return x.assetType===currentFilter}
@@ -111,3 +111,4 @@ renderLaunches();if(window.ethereum)window.ethereum.on?.('accountsChanged',()=>l
 </script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body></html>
+
