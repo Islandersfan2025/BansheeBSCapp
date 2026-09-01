@@ -12,6 +12,11 @@
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Permanent+Marker&family=Roboto+Mono:wght@400;600;700&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/ethers@6.13.5/dist/ethers.umd.min.js">
 function prepareTicketUpload(event){
+  if(!audiusUser){
+    if(event?.target)event.target.value='';
+    showToast('Connect your Audius artist account before uploading tickets or performance files');
+    return;
+  }
   const file=event.target.files?.[0];
   if(!file)return;
   selectedAudiusRelease=null;
@@ -97,7 +102,7 @@ function prepareTicketUpload(event){
 <section class="ticker"><div class="container"><div class="row g-0"><div class="col-6 col-lg-3 ticker-stat"><span class="ticker-label">Live launches</span><strong class="ticker-value" id="statLaunches">06</strong></div><div class="col-6 col-lg-3 ticker-stat"><span class="ticker-label">Music RWA volume</span><strong class="ticker-value" id="statVolume">$42.8K</strong></div><div class="col-6 col-lg-3 ticker-stat"><span class="ticker-label">Artist royalties</span><strong class="ticker-value" id="statRoyalties">$3.4K</strong></div><div class="col-6 col-lg-3 ticker-stat"><span class="ticker-label">Verified creators</span><strong class="ticker-value" id="statArtists">12</strong></div></div></div></section>
 <main>
 <section class="launchpad" id="launchpad"><div class="container"><div class="d-flex flex-column flex-md-row justify-content-between align-items-md-end gap-3 mb-4"><div><span class="chip">AI Verified Market</span><h2 class="section-title mb-0">Music launches</h2><small class="text-secondary">Fixed-price initial sale → open market → artist royalties</small></div><button class="btn-spray" onclick="document.querySelector('#create').scrollIntoView()">+ Launch Music RWA</button></div><div class="market-shell"><div class="market-toolbar"><input class="market-search" id="searchInput" placeholder="Search songs, albums, tickets, artists..." oninput="renderLaunches()"><button class="filter-btn active" data-filter="ALL" onclick="setFilter('ALL')">All</button><button class="filter-btn" data-filter="SONG" onclick="setFilter('SONG')">Songs</button><button class="filter-btn" data-filter="ALBUM" onclick="setFilter('ALBUM')">Albums</button><button class="filter-btn" data-filter="TICKET" onclick="setFilter('TICKET')">Tickets</button><button class="filter-btn" data-filter="INITIAL" onclick="setFilter('INITIAL')">Initial Sale</button><button class="filter-btn" data-filter="ACTIVE" onclick="setFilter('ACTIVE')">Open Market</button></div><div class="p-3 p-lg-4"><div class="row g-4" id="launchGrid"></div></div></div></div></section>
-<section class="pb-5" id="create"><div class="container"><div class="row g-4"><div class="col-lg-7"><div class="launch-form"><span class="chip">Creator Launch</span><h2 class="section-title mt-2">Launch your music</h2><p class="text-secondary">Connect your Audius artist account, choose one of your existing songs or albums, then configure its Banshee launch. No separate Banshee artist profile is required.</p>
+<section class="pb-5" id="create"><div class="container"><div class="row g-4"><div class="col-lg-7"><div class="launch-form"><span class="chip">Creator Launch</span><h2 class="section-title mt-2">Launch your music</h2><p class="text-secondary">Banshee is built exclusively for Audius artists. Connect your Audius account first to unlock song, album, performance, and ticket uploads. No separate Banshee artist profile is required.</p>
 
 <div class="row g-3 mb-3">
   <div class="col-12">
@@ -124,10 +129,15 @@ function prepareTicketUpload(event){
 </div>
 
 
+<div id="audiusUploadGate" class="selected-release mb-3">
+  <span class="chip">AUDIUS REQUIRED</span>
+  <div class="small text-secondary mt-2" id="audiusUploadGateText">Connect your Audius artist account above to unlock all Banshee uploads.</div>
+</div>
+
 <div class="row g-3 mb-3">
   <div class="col-12">
     <label class="form-label">Performance / ticket upload</label>
-    <input id="ticketUpload" class="form-control" type="file" accept="image/*,.json,.pdf" onchange="prepareTicketUpload(event)">
+    <input id="ticketUpload" class="form-control" type="file" disabled accept="image/*,.json,.pdf" onchange="prepareTicketUpload(event)">
     <div class="small text-secondary mt-2">For PERFORMANCE or TICKETS, upload event artwork, ticket metadata, or supporting event details. Audius songs and albums can still be selected from your connected catalog above.</div>
   </div>
 </div>
@@ -143,7 +153,43 @@ function prepareTicketUpload(event){
 <input id="audiusPermalink" type="hidden">
 
 <div class="row g-3">
-  <div class="col-12"><label class="form-label">BNB Greenfield object ID</label><input id="greenfieldObjectId" class="form-control" placeholder="Enter the Greenfield object ID for this release"><div class="small text-secondary mt-2">The Banshee AI verifies this Greenfield object before the launch request is accepted.</div></div>
+  <div class="col-12">
+    <label class="form-label">Release File</label>
+    <div class="selected-release" id="greenfieldUploadPanel">
+      <div class="row g-3 align-items-end">
+        <div class="col-lg-7">
+          <label class="small text-secondary mb-2">Song / album file</label>
+          <input id="greenfieldFile" class="form-control" type="file" disabled accept="audio/*,.wav,.mp3,.flac,.m4a,.aac,.ogg,.zip" onchange="prepareGreenfieldUpload(event)">
+          <div class="small text-secondary mt-2" id="greenfieldFileStatus">Select the audio file or album archive that matches your Audius release.</div>
+        </div>
+        <div class="col-lg-5">
+          <label class="small text-secondary mb-2">Visibility</label>
+          <select id="greenfieldVisibility" class="form-select" disabled>
+            <option value="PRIVATE" selected>Private</option>
+            <option value="PUBLIC_READ">Public Read</option>
+          </select>
+        </div>
+        <input id="greenfieldBucket" type="hidden" value="banshee-music">
+        <div class="col-12 d-grid">
+          <button id="greenfieldUploadButton" class="btn-spray" type="button" disabled onclick="uploadSelectedReleaseToGreenfield()">Upload Release</button>
+        </div>
+      </div>
+      <div id="greenfieldProgressWrap" class="mt-3" style="display:none">
+        <div class="d-flex justify-content-between small mb-1"><span id="greenfieldProgressLabel">Preparing upload…</span><span id="greenfieldProgressPct">0%</span></div>
+        <div class="progress"><div id="greenfieldProgressBar" class="progress-bar" style="width:0%"></div></div>
+      </div>
+      <div id="greenfieldUploadResult" class="mt-3" style="display:none">
+        <span class="chip">✓ RELEASE STORED</span>
+        <div class="small mt-2"><strong>Object:</strong> <span id="greenfieldObjectName">—</span></div>
+        <div class="small"><strong>Object ID:</strong> <span id="greenfieldObjectDisplay">—</span></div>
+        <div class="small"><strong>Transaction:</strong> <span id="greenfieldTxDisplay">—</span></div>
+      </div>
+      <input id="greenfieldObjectId" type="hidden">
+      <input id="greenfieldObjectNameValue" type="hidden">
+      <input id="greenfieldTxHash" type="hidden">
+    </div>
+    <div class="small text-secondary mt-2">Audius connection is required before any file can be uploaded. For songs and albums, select the matching release from your Audius catalog first; performances and tickets also require an authenticated Audius artist account.</div>
+  </div>
   <div class="col-md-7"><label class="form-label">Release title</label><input id="launchTitle" class="form-control" placeholder="Select an Audius release" readonly></div>
   <div class="col-md-5"><label class="form-label">Release type</label><select id="launchType" class="form-select" disabled><option>SONG</option><option>ALBUM</option><option>PERFORMANCE</option><option>TICKETS</option></select></div>
   <div class="col-md-4"><label class="form-label">Supply</label><input id="launchSupply" class="form-control" type="number" min="1" value="500"></div>
@@ -168,7 +214,8 @@ const APP_CONFIG={
  backendBase:'',
  bansheeAgentBase:'http://localhost:8787',
  audiusApiKey:'YOUR_AUDIUS_API_KEY',
- audiusRedirectUri:window.location.origin+window.location.pathname
+ audiusRedirectUri:window.location.origin+window.location.pathname,
+ greenfieldUploadEndpoint:'/api/greenfield/upload'
 };
 let activeChainKey='botchain';
 let CONFIG={...APP_CONFIG,...CHAINS[activeChainKey]};
@@ -261,12 +308,26 @@ async function connectAudius(){
   }
 }
 
+function setAudiusUploadAccess(enabled){
+  const ids=['ticketUpload','greenfieldFile','greenfieldVisibility'];
+  ids.forEach(id=>{const el=document.getElementById(id);if(el)el.disabled=!enabled});
+  const uploadBtn=document.getElementById('greenfieldUploadButton');
+  if(uploadBtn)uploadBtn.disabled=!enabled;
+  const gate=document.getElementById('audiusUploadGate');
+  const gateText=document.getElementById('audiusUploadGateText');
+  if(gate)gate.style.opacity=enabled?'0.65':'1';
+  if(gateText)gateText.textContent=enabled?'Audius connected — song, album, performance, and ticket uploads are unlocked.':'Connect your Audius artist account above to unlock all Banshee uploads.';
+}
+
 async function disconnectAudius(){
   try{
     const sdk=getAudiusClient();
     if(typeof sdk.oauth.logout==='function')await sdk.oauth.logout();
   }catch(e){console.warn(e)}
   audiusUser=null;
+  setAudiusUploadAccess(false);
+  const ticketInput=document.getElementById('ticketUpload'); if(ticketInput)ticketInput.value='';
+  resetGreenfieldUpload();
   audiusCatalogItems=[];
   selectedAudiusRelease=null;
   document.getElementById('audiusStatus').style.display='none';
@@ -284,6 +345,7 @@ async function disconnectAudius(){
 async function applyAudiusUser(user){
   if(!user)return;
   audiusUser=user;
+  setAudiusUploadAccess(true);
   const avatar=audiusImage(user);
   const avatarEl=document.getElementById('audiusAvatar');
   if(avatar){avatarEl.src=avatar;avatarEl.style.display='block'}else{avatarEl.removeAttribute('src');avatarEl.style.display='none'}
@@ -382,6 +444,7 @@ function selectAudiusRelease(index){
   document.getElementById('selectedReleaseName').textContent=item.title;
   document.getElementById('selectedReleaseKind').textContent=item.type;
   document.getElementById('selectedReleaseBox').style.display='block';
+  resetGreenfieldUpload();
   showToast(`${item.title} selected`);
 }
 
@@ -408,6 +471,95 @@ async function checkBansheeAgentHealth(){
   return r.json();
 }
 
+let selectedGreenfieldFile=null;
+let greenfieldUploadReceipt=null;
+
+function resetGreenfieldUpload(){
+  selectedGreenfieldFile=null;
+  greenfieldUploadReceipt=null;
+  const f=document.getElementById('greenfieldFile'); if(f)f.value='';
+  const oid=document.getElementById('greenfieldObjectId'); if(oid)oid.value='';
+  const on=document.getElementById('greenfieldObjectNameValue'); if(on)on.value='';
+  const tx=document.getElementById('greenfieldTxHash'); if(tx)tx.value='';
+  const result=document.getElementById('greenfieldUploadResult'); if(result)result.style.display='none';
+  const wrap=document.getElementById('greenfieldProgressWrap'); if(wrap)wrap.style.display='none';
+  const status=document.getElementById('greenfieldFileStatus'); if(status)status.textContent='Select the audio file or album archive that matches your Audius release.';
+}
+
+function prepareGreenfieldUpload(event){
+  if(!audiusUser){
+    if(event?.target)event.target.value='';
+    showToast('Connect your Audius artist account before uploading a release file');
+    return;
+  }
+  const file=event?.target?.files?.[0]||null;
+  selectedGreenfieldFile=file;
+  greenfieldUploadReceipt=null;
+  document.getElementById('greenfieldObjectId').value='';
+  document.getElementById('greenfieldUploadResult').style.display='none';
+  if(!file){document.getElementById('greenfieldFileStatus').textContent='Select the audio file or album archive that matches your Audius release.';return}
+  const mb=(file.size/1024/1024).toFixed(file.size>1024*1024?1:2);
+  document.getElementById('greenfieldFileStatus').textContent=`${file.name} · ${mb} MB · ready for Greenfield`;
+}
+
+function setGreenfieldProgress(percent,label){
+  const pct=Math.max(0,Math.min(100,Number(percent)||0));
+  document.getElementById('greenfieldProgressWrap').style.display='block';
+  document.getElementById('greenfieldProgressBar').style.width=`${pct}%`;
+  document.getElementById('greenfieldProgressPct').textContent=`${pct}%`;
+  document.getElementById('greenfieldProgressLabel').textContent=label||'Uploading…';
+}
+
+async function uploadSelectedReleaseToGreenfield(){
+  if(!audiusUser){showToast('Connect your Audius artist account first');return}
+  if(!selectedAudiusRelease){showToast('Select a song or album from your Audius catalog first');return}
+  if(!selectedGreenfieldFile){showToast('Choose the song or album file to upload');return}
+  if(!account){const connected=await connectWallet();if(!connected)return}
+  const bucket=String(document.getElementById('greenfieldBucket').value||'').trim();
+  if(!bucket){showToast('Enter a Greenfield bucket name');return}
+  const visibility=document.getElementById('greenfieldVisibility').value;
+  const button=document.getElementById('greenfieldUploadButton');
+  button.disabled=true;
+  try{
+    setGreenfieldProgress(10,'Preparing Audius release metadata…');
+    const form=new FormData();
+    form.append('file',selectedGreenfieldFile,selectedGreenfieldFile.name);
+    form.append('bucketName',bucket);
+    form.append('visibility',visibility);
+    form.append('wallet',account);
+    form.append('audiusUserId',audiusUser.id||'');
+    form.append('audiusHandle',audiusUser.handle||'');
+    form.append('audiusContentId',selectedAudiusRelease.id||'');
+    form.append('audiusContentType',selectedAudiusRelease.type||'');
+    form.append('audiusPermalink',selectedAudiusRelease.permalink||'');
+    form.append('releaseTitle',selectedAudiusRelease.title||selectedGreenfieldFile.name);
+    setGreenfieldProgress(30,'Creating Greenfield object…');
+    const base=APP_CONFIG.backendBase||'';
+    const endpoint=APP_CONFIG.greenfieldUploadEndpoint||'/api/greenfield/upload';
+    const r=await fetch(`${base}${endpoint}`,{method:'POST',body:form});
+    const data=await r.json().catch(()=>({}));
+    if(!r.ok)throw new Error(data?.error||data?.message||`Greenfield upload failed (${r.status})`);
+    const objectId=String(data.objectId||data.greenfieldObjectId||data.object?.id||'').trim();
+    const objectName=String(data.objectName||data.object?.name||selectedGreenfieldFile.name);
+    const txHash=String(data.transactionHash||data.txHash||data.createObjectTxHash||'');
+    if(!objectId)throw new Error('Greenfield upload completed without an object ID');
+    greenfieldUploadReceipt={...data,objectId,objectName,transactionHash:txHash,bucketName:bucket,visibility};
+    document.getElementById('greenfieldObjectId').value=objectId;
+    document.getElementById('greenfieldObjectNameValue').value=objectName;
+    document.getElementById('greenfieldTxHash').value=txHash;
+    document.getElementById('greenfieldObjectName').textContent=objectName;
+    document.getElementById('greenfieldObjectDisplay').textContent=objectId;
+    document.getElementById('greenfieldTxDisplay').textContent=txHash||'Confirmed';
+    document.getElementById('greenfieldUploadResult').style.display='block';
+    setGreenfieldProgress(100,'Greenfield upload complete');
+    showToast('Audius release stored on BNB Greenfield');
+  }catch(e){
+    console.error('Greenfield upload',e);
+    setGreenfieldProgress(0,'Upload failed');
+    showToast(e?.message||'Greenfield upload failed');
+  }finally{button.disabled=false}
+}
+
 function currentGreenfieldObjectId(){
   return String(document.getElementById('greenfieldObjectId')?.value||'').trim();
 }
@@ -422,7 +574,7 @@ function createVerificationIdentity(payload){
 
 async function verifyLaunchWithBanshee(payload){
   const greenfieldObjectId=currentGreenfieldObjectId();
-  if(!greenfieldObjectId)throw new Error('Enter the BNB Greenfield object ID for this release');
+  if(!greenfieldObjectId)throw new Error('Upload this Audius release to BNB Greenfield first');
 
   const identity=createVerificationIdentity(payload);
   const verificationRequest={
@@ -448,10 +600,10 @@ async function submitLaunchRequest(){
   const launchType=document.getElementById('launchType').value;
   const isEventAsset=['PERFORMANCE','TICKETS'].includes(launchType);
   const ticketFile=document.getElementById('ticketUpload')?.files?.[0];
-  if(!isEventAsset && !audiusUser){showToast('Connect your Audius artist account first');return}
+  if(!audiusUser){showToast('Connect your Audius artist account first — Banshee uploads are Audius-only');return}
   if(!isEventAsset && !selectedAudiusRelease){showToast('Select a song or album from your Audius catalog');return}
   if(isEventAsset && !ticketFile){showToast('Upload performance or ticket details first');return}
-  if(!currentGreenfieldObjectId()){showToast('Enter the BNB Greenfield object ID first');return}
+  if(!currentGreenfieldObjectId()){showToast('Upload this Audius release to BNB Greenfield first');return}
   if(!account){const connected=await connectWallet();if(!connected)return}
 
   const payload={
@@ -467,6 +619,10 @@ async function submitLaunchRequest(){
     audiusContentId:selectedAudiusRelease?.id||null,
     audiusContentType:selectedAudiusRelease?.type||null,
     greenfieldObjectId:currentGreenfieldObjectId(),
+    greenfieldBucket:document.getElementById('greenfieldBucket')?.value||null,
+    greenfieldObjectName:document.getElementById('greenfieldObjectNameValue')?.value||null,
+    greenfieldTxHash:document.getElementById('greenfieldTxHash')?.value||null,
+    greenfieldVisibility:document.getElementById('greenfieldVisibility')?.value||null,
     chain:CONFIG.agentChain,
     hookAddress:CONFIG.bansheeHook,
     wallet:account
@@ -519,7 +675,7 @@ function nextTrack(){if(!launches.length)return;currentTrack=(currentTrack+1)%la
 function togglePlayback(){playing=!playing;document.getElementById('playPauseBtn').textContent=playing?'⏸':'▶';document.querySelectorAll('.bar').forEach(b=>b.style.animationPlayState=playing?'running':'paused');showToast(playing?'Preview started':'Preview paused')}
 const wave=document.getElementById('wave');for(let i=0;i<58;i++){const b=document.createElement('span');b.className='bar';b.style.animationDelay=`${Math.random()*1.2}s`;wave.appendChild(b)}
 const sprayColors=['#04d9ff','#ff2f86','#ff6a20','#7a37ff','#ffd441'];function sprayBurst(x,y){for(let i=0;i<7;i++){const d=document.createElement('span');d.className='paint-dot';d.style.setProperty('--paint',sprayColors[i%sprayColors.length]);d.style.left=`${x+(Math.random()-.5)*90}px`;d.style.top=`${y+(Math.random()-.5)*70}px`;document.body.appendChild(d);setTimeout(()=>d.remove(),1400)}}window.addEventListener('click',e=>sprayBurst(e.clientX,e.clientY));
-applyActiveChain(activeChainKey);renderLaunches();restoreAudiusSession();checkBansheeAgentHealth().then(()=>console.log('The Banshee AI agent is online')).catch(e=>console.warn('The Banshee AI agent is offline',e));if(window.ethereum){window.ethereum.on?.('accountsChanged',()=>location.reload());window.ethereum.on?.('chainChanged',chainId=>{const id=String(chainId).toLowerCase();const found=Object.entries(CHAINS).find(([,c])=>c.chainIdHex.toLowerCase()===id);if(found){applyActiveChain(found[0]);provider=null;signer=null;if(account&&hasHook())loadChainLaunches().catch(console.warn);else{launches=[...DEMO_LAUNCHES];renderLaunches()}}})}
+applyActiveChain(activeChainKey);renderLaunches();setAudiusUploadAccess(false);restoreAudiusSession();checkBansheeAgentHealth().then(()=>console.log('The Banshee AI agent is online')).catch(e=>console.warn('The Banshee AI agent is offline',e));if(window.ethereum){window.ethereum.on?.('accountsChanged',()=>location.reload());window.ethereum.on?.('chainChanged',chainId=>{const id=String(chainId).toLowerCase();const found=Object.entries(CHAINS).find(([,c])=>c.chainIdHex.toLowerCase()===id);if(found){applyActiveChain(found[0]);provider=null;signer=null;if(account&&hasHook())loadChainLaunches().catch(console.warn);else{launches=[...DEMO_LAUNCHES];renderLaunches()}}})}
 </script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body></html>
