@@ -91,8 +91,8 @@ function prepareTicketUpload(event){
 </head>
 <body>
 <div class="graffiti-bg"></div><div class="scanline"></div>
-<nav class="navbar navbar-expand-lg fixed-top site-nav"><div class="container-fluid px-3 px-lg-5"><a class="navbar-brand" href="#home">Banshee</a><button class="navbar-toggler bg-light" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu"><span class="navbar-toggler-icon"></span></button><div class="collapse navbar-collapse" id="navMenu"><ul class="navbar-nav ms-auto align-items-lg-center gap-lg-2"><li class="nav-item"><a class="nav-link" href="#launchpad">Explore</a></li><li class="nav-item"><a class="nav-link" href="#launchpad" onclick="setFilter('NEW')">New</a></li><li class="nav-item"><a class="nav-link" href="#launchpad" onclick="setFilter('TRENDING')">Trending</a></li><li class="nav-item"><a class="nav-link" href="#create">Launch</a></li><li class="nav-item"><a class="nav-link" href="#about">About</a></li><li class="nav-item mt-2 mt-lg-0"><span class="network-pill"><span class="network-dot"></span> BOTCHAIN TESTNET</span></li><li class="nav-item mt-2 mt-lg-0"><a class="wallet-pill" href="#" id="walletButton" onclick="connectWallet();return false;">Connect Wallet</a></li></ul></div></div></nav>
-<header class="hero" id="home"><div class="container"><div class="hero-panel"><span class="hero-badge">// Music Marketplace powered by Uniswap V4</span><h1 class="hero-title"><span class="banshee">Banshee</span><span class="launch">Music</span></h1><div class="swipe"></div><p class="lead-copy">Launch Music. Trade Markets. Earn Royalties & Yield.</p><div class="d-flex flex-wrap gap-3 mt-4"><button class="btn-spray" onclick="document.querySelector('#launchpad').scrollIntoView()">Explore Launches</button><button class="btn-outline-spray" onclick="document.querySelector('#create').scrollIntoView()">Launch an Asset</button></div></div></div></header>
+<nav class="navbar navbar-expand-lg fixed-top site-nav"><div class="container-fluid px-3 px-lg-5"><a class="navbar-brand" href="#home">Banshee</a><button class="navbar-toggler bg-light" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu"><span class="navbar-toggler-icon"></span></button><div class="collapse navbar-collapse" id="navMenu"><ul class="navbar-nav ms-auto align-items-lg-center gap-lg-2"><li class="nav-item"><a class="nav-link" href="#launchpad">Explore</a></li><li class="nav-item"><a class="nav-link" href="#launchpad" onclick="setFilter('NEW')">New</a></li><li class="nav-item"><a class="nav-link" href="#launchpad" onclick="setFilter('TRENDING')">Trending</a></li><li class="nav-item"><a class="nav-link" href="#create">Launch</a></li><li class="nav-item"><a class="nav-link" href="#about">About</a></li><li class="nav-item mt-2 mt-lg-0"><select id="networkSelect" class="network-pill" style="background:#101014;color:#fff" onchange="switchNetwork(this.value)"><option value="botchain">● BOTCHAIN MAINNET</option><option value="bnb">● BNB CHAIN</option></select></li><li class="nav-item mt-2 mt-lg-0"><a class="wallet-pill" href="#" id="walletButton" onclick="connectWallet();return false;">Connect Wallet</a></li></ul></div></div></nav>
+<header class="hero" id="home"><div class="container"><div class="hero-panel"><span class="hero-badge">// Music Marketplace powered by Uniswap V4</span><h1 class="hero-title"><span class="banshee">Banshee</span><span class="launch">Music</span></h1><div class="swipe"></div><p class="lead-copy">Demo-Launch Music. Trade Markets. Earn Royalties & Yield.</p><div class="d-flex flex-wrap gap-3 mt-4"><button class="btn-spray" onclick="document.querySelector('#launchpad').scrollIntoView()">Explore Launches</button><button class="btn-outline-spray" onclick="document.querySelector('#create').scrollIntoView()">Launch an Asset</button></div></div></div></header>
 <section class="ticker"><div class="container"><div class="row g-0"><div class="col-6 col-lg-3 ticker-stat"><span class="ticker-label">Live launches</span><strong class="ticker-value" id="statLaunches">06</strong></div><div class="col-6 col-lg-3 ticker-stat"><span class="ticker-label">Music RWA volume</span><strong class="ticker-value" id="statVolume">$42.8K</strong></div><div class="col-6 col-lg-3 ticker-stat"><span class="ticker-label">Artist royalties</span><strong class="ticker-value" id="statRoyalties">$3.4K</strong></div><div class="col-6 col-lg-3 ticker-stat"><span class="ticker-label">Verified creators</span><strong class="ticker-value" id="statArtists">12</strong></div></div></div></section>
 <main>
 <section class="launchpad" id="launchpad"><div class="container"><div class="d-flex flex-column flex-md-row justify-content-between align-items-md-end gap-3 mb-4"><div><span class="chip">AI Verified Market</span><h2 class="section-title mb-0">Music launches</h2><small class="text-secondary">Fixed-price initial sale → open market → artist royalties</small></div><button class="btn-spray" onclick="document.querySelector('#create').scrollIntoView()">+ Launch Music RWA</button></div><div class="market-shell"><div class="market-toolbar"><input class="market-search" id="searchInput" placeholder="Search songs, albums, tickets, artists..." oninput="renderLaunches()"><button class="filter-btn active" data-filter="ALL" onclick="setFilter('ALL')">All</button><button class="filter-btn" data-filter="SONG" onclick="setFilter('SONG')">Songs</button><button class="filter-btn" data-filter="ALBUM" onclick="setFilter('ALBUM')">Albums</button><button class="filter-btn" data-filter="TICKET" onclick="setFilter('TICKET')">Tickets</button><button class="filter-btn" data-filter="INITIAL" onclick="setFilter('INITIAL')">Initial Sale</button><button class="filter-btn" data-filter="ACTIVE" onclick="setFilter('ACTIVE')">Open Market</button></div><div class="p-3 p-lg-4"><div class="row g-4" id="launchGrid"></div></div></div></div></section>
@@ -142,6 +142,7 @@ function prepareTicketUpload(event){
 <input id="audiusPermalink" type="hidden">
 
 <div class="row g-3">
+  <div class="col-12"><label class="form-label">BNB Greenfield object ID</label><input id="greenfieldObjectId" class="form-control" placeholder="Enter the Greenfield object ID for this release"><div class="small text-secondary mt-2">The Banshee AI verifies this Greenfield object before the launch request is accepted.</div></div>
   <div class="col-md-7"><label class="form-label">Release title</label><input id="launchTitle" class="form-control" placeholder="Select an Audius release" readonly></div>
   <div class="col-md-5"><label class="form-label">Release type</label><select id="launchType" class="form-select" disabled><option>SONG</option><option>ALBUM</option><option>PERFORMANCE</option><option>TICKETS</option></select></div>
   <div class="col-md-4"><label class="form-label">Supply</label><input id="launchSupply" class="form-control" type="number" min="1" value="500"></div>
@@ -152,25 +153,24 @@ function prepareTicketUpload(event){
 </div></div></div>
 
 <div class="col-lg-5"><div class="info-panel h-100"><h3 class="section-title fs-2">Launch lifecycle</h3><div class="mb-3"><span class="chip">01 Connect</span><p class="small mt-2">The artist attaches their Audius account to Banshee.</p></div><div class="mb-3"><span class="chip">02 Select</span><p class="small mt-2">Banshee imports the artist's existing songs and albums directly from their Audius catalog.</p></div><div class="mb-3"><span class="chip">03 Configure</span><p class="small mt-2">The artist chooses supply, initial price and the protected initial-sale window.</p></div><div><span class="chip">04 Launch</span><p class="small mt-2">Banshee prepares metadata, creates the asset and opens the market through the Banshee Hook.</p></div></div></div></div></div></section>
-<section class="py-5" id="about"><div class="container"><div class="row g-4"><div class="col-lg-5"><article class="paper-card"><h2>// About</h2><p>Banshee is a music marketplace for songs, albums and performance tickets. The Banshee AI agent verifies creators and coordinates releases.</p><p>Proof-of-Performance uses market activity and creator engagement to support transparent artist rewards and royalties.</p></article></div><div class="col-lg-7"><article class="dark-card"><h2 class="section-title">// Built on</h2><div><span class="stack-pill">Open Protocol / Audius</span><span class="stack-pill">Uniswap v4</span><span class="stack-pill">Livepeer</span><span class="stack-pill">BNB Greenfield</span><span class="stack-pill">SubQuery</span></div><hr class="border-secondary"><p><strong style="color:var(--cyan)">Content:</strong> Audius + Livepeer</p><p><strong style="color:var(--pink)">Storage:</strong> BNB Greenfield</p><p><strong style="color:var(--orange)">Economic layer:</strong> Banshee Hook / Uniswap v4</p><p><strong style="color:var(--green)">Intelligence:</strong> SubQuery + Botchain AI</p></article></div></div></div></section>
+<section class="py-5" id="about"><div class="container"><div class="row g-4"><div class="col-lg-5"><article class="paper-card"><h2>// About</h2><p>Banshee is a music marketplace for songs, albums and performance tickets. The Banshee AI agent verifies creators and coordinates releases.</p><p>Proof-of-Performance uses market activity and creator engagement to support transparent artist rewards and royalties.</p></article></div><div class="col-lg-7"><article class="dark-card"><h2 class="section-title">// Built on</h2><div><span class="stack-pill">Open Protocol / Audius</span><span class="stack-pill">Uniswap v4</span><span class="stack-pill">Livepeer</span><span class="stack-pill">BNB Greenfield</span><span class="stack-pill">SubQuery</span></div><hr class="border-secondary"><p><strong style="color:var(--cyan)">Content:</strong> Audius + Livepeer</p><p><strong style="color:var(--pink)">Storage:</strong> BNB Greenfield</p><p><strong style="color:var(--orange)">Economic layer:</strong> BNB Chain / Uniswap v4</p><p><strong style="color:var(--green)">Intelligence:</strong> SubQuery / Botchain AI</p></article></div></div></div></section>
 <div class="container"><section class="player"><div class="row align-items-center"><div class="col-lg-3 d-flex align-items-center gap-3"><div class="mini-vinyl"></div><div><strong id="nowTitle">MIDNIGHT DRIVE</strong><br><small id="nowArtist">Neon Ghost</small></div></div><div class="col-lg-5"><div class="wave" id="wave"></div></div><div class="col-lg-4 d-flex align-items-center justify-content-lg-end gap-3"><button class="ctrl" onclick="previousTrack()">⏮</button><button class="play-circle" id="playPauseBtn" onclick="togglePlayback()">▶</button><button class="ctrl" onclick="nextTrack()">⏭</button><small id="timeCode">Preview</small></div></div></section></div>
 </main>
 <div class="toast-panel" id="toastPanel">Ready</div>
 <div class="modal fade" id="tradeModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><div class="detail-hero"><small id="modalType" class="text-secondary"></small><h4 id="modalTitle" class="mb-0"></h4><small id="modalArtist"></small></div><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="row g-3"><div class="col-6"><div class="metric"><span>Price</span><strong id="modalPrice"></strong></div></div><div class="col-6"><div class="metric"><span>Status</span><strong id="modalState"></strong></div></div><div class="col-12"><label class="form-label">Quantity</label><input class="form-control" id="buyQuantity" type="number" value="1" min="1"></div><div class="col-12 small text-secondary" id="modalInfo"></div></div></div><div class="modal-footer"><button class="btn-outline-spray" data-bs-dismiss="modal">Close</button><button class="btn-spray" id="buyButton" onclick="buySelectedLaunch()">Buy</button></div></div></div></div>
 <script>
-const CONFIG={
-  chainId:968,
-  chainIdHex:'0x3C8',
-  chainName:'BOT Chain Testnet',
-  rpcUrls:['https://rpc.bohr.life'],
-  nativeCurrency:{name:'BOT',symbol:'BOT',decimals:18},
-  blockExplorerUrls:['https://scan.bohr.life'],
-  // Replace after DeployBansheeHook.s.sol succeeds:
-  bansheeHook:'0x0000000000000000000000000000000000000000',
-  backendBase:'',
-  audiusApiKey:'YOUR_AUDIUS_API_KEY',
-  audiusRedirectUri:window.location.origin + window.location.pathname
+const CHAINS={
+ botchain:{key:'botchain',agentChain:'botchain',chainId:677,chainIdHex:'0x2A5',chainName:'BOT Chain Mainnet',rpcUrls:['https://rpc.botchain.ai'],nativeCurrency:{name:'BOT',symbol:'BOT',decimals:18},blockExplorerUrls:['https://scan.botchain.ai'],bansheeHook:'0xBaa5000000000000000000000000000000000677',hookIsMock:true},
+ bnb:{key:'bnb',agentChain:'bnb',chainId:56,chainIdHex:'0x38',chainName:'BNB Smart Chain',rpcUrls:['https://bsc-dataseed.bnbchain.org'],nativeCurrency:{name:'BNB',symbol:'BNB',decimals:18},blockExplorerUrls:['https://bscscan.com'],bansheeHook:'0xBaa5000000000000000000000000000000000056',hookIsMock:true}
 };
+const APP_CONFIG={
+ backendBase:'',
+ bansheeAgentBase:'http://localhost:8787',
+ audiusApiKey:'YOUR_AUDIUS_API_KEY',
+ audiusRedirectUri:window.location.origin+window.location.pathname
+};
+let activeChainKey='botchain';
+let CONFIG={...APP_CONFIG,...CHAINS[activeChainKey]};
 const HOOK_ABI=[
  'function nextLaunchId() view returns (uint256)',
  'function getLaunch(uint256) view returns ((address artist,address asset,uint256 tokenId,address marketToken,address quoteToken,bytes32 poolId,uint8 assetType,uint8 state,uint256 supply,uint256 sold,uint256 launchPrice,uint64 startTime,uint64 fairLaunchEnd,uint16 protocolFeeBps,uint16 secondaryRoyaltyBps,uint256 swapCount))',
@@ -185,7 +185,7 @@ const ERC20_ABI=['function decimals() view returns(uint8)','function symbol() vi
 const TYPE=['SONG','ALBUM','TICKET']; const STATE=['NONE','CREATED','INITIAL SALE','OPEN MARKET','ENDED'];
 const COLORS=['#ff2f86','#04d9ff','#7a37ff','#65ff6a','#ff6a20','#ffd441'];
 const toastPanel=document.getElementById('toastPanel'); let toastTimer,provider,signer,account,currentFilter='ALL',selectedLaunch=null,currentTrack=0,playing=false;
-let launches=[
+const DEMO_LAUNCHES=[
  {id:1,title:'MIDNIGHT DRIVE',artistName:'Neon Ghost',assetType:'SONG',state:'INITIAL SALE',price:'10.00',symbol:'USDC',supply:1000,sold:648,royalty:10,source:'AUDIUS'},
  {id:2,title:'AFTER HOURS EP',artistName:'Velvet Static',assetType:'ALBUM',state:'OPEN MARKET',price:'18.50',symbol:'USDC',supply:500,sold:500,royalty:8,source:'AUDIUS'},
  {id:3,title:'LIVE IN ATLANTA',artistName:'Banshee',assetType:'TICKET',state:'INITIAL SALE',price:'25.00',symbol:'USDC',supply:750,sold:311,royalty:12,source:'LIVEPEER'},
@@ -193,10 +193,13 @@ let launches=[
  {id:5,title:'BACKSTAGE STREAM',artistName:'Akltat Torrage',assetType:'TICKET',state:'CREATED',price:'12.00',symbol:'USDC',supply:300,sold:0,royalty:10,source:'LIVEPEER'},
  {id:6,title:'GHOST TAPE',artistName:'MetaMask Radio',assetType:'ALBUM',state:'OPEN MARKET',price:'22.80',symbol:'USDC',supply:333,sold:333,royalty:9,source:'AUDIUS'}
 ];
-function hasHook(){return CONFIG.bansheeHook.toLowerCase()!=='0x0000000000000000000000000000000000000000'}
+let launches=[...DEMO_LAUNCHES];
+function hasHook(){return !CONFIG.hookIsMock&&CONFIG.bansheeHook.toLowerCase()!=='0x0000000000000000000000000000000000000000'}
 function showToast(m){toastPanel.textContent=m;toastPanel.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>toastPanel.classList.remove('show'),2200)}
-async function ensureChain(){if(!window.ethereum)throw new Error('MetaMask not found');const id=await window.ethereum.request({method:'eth_chainId'});if(id!==CONFIG.chainIdHex){try{await window.ethereum.request({method:'wallet_switchEthereumChain',params:[{chainId:CONFIG.chainIdHex}]})}catch(e){if(e.code===4902)await window.ethereum.request({method:'wallet_addEthereumChain',params:[{chainId:CONFIG.chainIdHex,chainName:CONFIG.chainName,rpcUrls:CONFIG.rpcUrls,nativeCurrency:CONFIG.nativeCurrency,blockExplorerUrls:CONFIG.blockExplorerUrls}]});else throw e;}}}
-async function connectWallet(){try{await ensureChain();provider=new ethers.BrowserProvider(window.ethereum);signer=await provider.getSigner();account=await signer.getAddress();document.getElementById('walletButton').textContent=`${account.slice(0,6)}...${account.slice(-4)}`;showToast('Wallet connected');if(hasHook())await loadChainLaunches();return account}catch(e){showToast(e.shortMessage||e.message||'Wallet connection failed');return null}}
+function applyActiveChain(key){activeChainKey=key;CONFIG={...APP_CONFIG,...CHAINS[key]};const s=document.getElementById('networkSelect');if(s)s.value=key}
+async function ensureChain(){if(!window.ethereum)throw new Error('MetaMask not found');const id=(await window.ethereum.request({method:'eth_chainId'})).toLowerCase();if(id!==CONFIG.chainIdHex.toLowerCase()){try{await window.ethereum.request({method:'wallet_switchEthereumChain',params:[{chainId:CONFIG.chainIdHex}]})}catch(e){if(e.code===4902)await window.ethereum.request({method:'wallet_addEthereumChain',params:[{chainId:CONFIG.chainIdHex,chainName:CONFIG.chainName,rpcUrls:CONFIG.rpcUrls,nativeCurrency:CONFIG.nativeCurrency,blockExplorerUrls:CONFIG.blockExplorerUrls}]});else throw e}}}
+async function switchNetwork(key){if(!CHAINS[key])return;applyActiveChain(key);provider=null;signer=null;try{await ensureChain();provider=new ethers.BrowserProvider(window.ethereum);const accts=await provider.send('eth_accounts',[]);if(accts.length){signer=await provider.getSigner();account=await signer.getAddress();document.getElementById('walletButton').textContent=`${account.slice(0,6)}...${account.slice(-4)}`}showToast(`Switched to ${CONFIG.chainName}`);if(hasHook())await loadChainLaunches();else{launches=[...DEMO_LAUNCHES];renderLaunches()}}catch(e){showToast(e.shortMessage||e.message||'Network switch failed')}}
+async function connectWallet(){try{await ensureChain();provider=new ethers.BrowserProvider(window.ethereum);signer=await provider.getSigner();account=await signer.getAddress();document.getElementById('walletButton').textContent=`${account.slice(0,6)}...${account.slice(-4)}`;showToast(`Wallet connected · ${CONFIG.chainName}`);if(hasHook())await loadChainLaunches();return account}catch(e){showToast(e.shortMessage||e.message||'Wallet connection failed');return null}}
 function setFilter(f){currentFilter=f;document.querySelectorAll('.filter-btn').forEach(b=>b.classList.toggle('active',b.dataset.filter===f));renderLaunches()}
 function matchesFilter(x){if(currentFilter==='ALL'||currentFilter==='NEW'||currentFilter==='TRENDING')return true;if(currentFilter==='FAIR')return x.state==='INITIAL SALE';if(currentFilter==='ACTIVE')return x.state==='OPEN MARKET';return x.assetType===currentFilter}
 function renderLaunches(){const q=(document.getElementById('searchInput')?.value||'').toLowerCase();let rows=launches.filter(x=>matchesFilter(x)&&(x.title+' '+x.artistName+' '+x.assetType).toLowerCase().includes(q));if(currentFilter==='TRENDING')rows=[...rows].sort((a,b)=>(b.sold/b.supply)-(a.sold/a.supply));if(currentFilter==='NEW')rows=[...rows].sort((a,b)=>b.id-a.id);const grid=document.getElementById('launchGrid');grid.innerHTML='';rows.forEach((x,i)=>{const accent=COLORS[(x.id-1)%COLORS.length],pct=Math.min(100,Math.round((Number(x.sold)/Math.max(1,Number(x.supply)))*100));const col=document.createElement('div');col.className='col-md-6 col-xl-4';col.innerHTML=`<article class="launch-card" style="--accent:${accent};--splash:${COLORS[(x.id+1)%COLORS.length]}"><div class="launch-art"><span class="asset-type">${x.assetType}</span><span class="state-badge">${x.state}</span><div class="vinyl"></div></div><div class="launch-body"><h3 class="launch-name">${x.title}</h3><p class="artist">by ${x.artistName} · ${x.source}</p><div class="metric-grid"><div class="metric"><span>Launch price</span><strong>${x.price} ${x.symbol}</strong></div><div class="metric"><span>Artist royalty</span><strong>${x.royalty}%</strong></div><div class="metric"><span>Sold</span><strong>${x.sold} / ${x.supply}</strong></div><div class="metric"><span>Launch #</span><strong>#${x.id}</strong></div></div><div class="progress"><div class="progress-bar" style="width:${pct}%"></div></div><div class="supply-line"><span>${pct}% distributed</span><span>${Math.max(0,Number(x.supply)-Number(x.sold))} remaining</span></div><div class="card-actions"><button class="trade-btn" onclick="openLaunch(${x.id})">${x.state==='INITIAL SALE'?'BUY INITIAL SALE':'VIEW MARKET'}</button><button class="trade-btn" onclick="previewLaunch(${x.id})">▶</button></div></div></article>`;grid.appendChild(col)});document.getElementById('statLaunches').textContent=String(launches.length).padStart(2,'0')}
@@ -213,13 +216,13 @@ let selectedAudiusRelease=null;
 function getAudiusClient(){
   if(audiusClient)return audiusClient;
   if(!window.audiusSdk)throw new Error('Audius SDK failed to load');
-  if(!CONFIG.audiusApiKey||CONFIG.audiusApiKey==='YOUR_AUDIUS_API_KEY'){
-    throw new Error('Set CONFIG.audiusApiKey before connecting Audius');
+  if(!APP_CONFIG.audiusApiKey||APP_CONFIG.audiusApiKey==='YOUR_AUDIUS_API_KEY'){
+    throw new Error('Set APP_CONFIG.audiusApiKey before connecting Audius');
   }
   audiusClient=window.audiusSdk({
     appName:'Banshee',
-    apiKey:CONFIG.audiusApiKey,
-    redirectUri:CONFIG.audiusRedirectUri
+    apiKey:APP_CONFIG.audiusApiKey,
+    redirectUri:APP_CONFIG.audiusRedirectUri
   });
   return audiusClient;
 }
@@ -284,7 +287,7 @@ async function applyAudiusUser(user){
 }
 
 async function audiusGet(path){
-  const url=`https://api.audius.co/v1${path}${path.includes('?')?'&':'?'}api_key=${encodeURIComponent(CONFIG.audiusApiKey)}`;
+  const url=`https://api.audius.co/v1${path}${path.includes('?')?'&':'?'}api_key=${encodeURIComponent(APP_CONFIG.audiusApiKey)}`;
   const r=await fetch(url);
   if(!r.ok)throw new Error(`Audius API error (${r.status})`);
   return r.json();
@@ -386,8 +389,50 @@ async function restoreAudiusSession(){
       await applyAudiusUser(user);
     }
   }catch(e){
-    if(CONFIG.audiusApiKey!=='YOUR_AUDIUS_API_KEY')console.warn('Audius session restore',e);
+    if(APP_CONFIG.audiusApiKey!=='YOUR_AUDIUS_API_KEY')console.warn('Audius session restore',e);
   }
+}
+
+async function checkBansheeAgentHealth(){
+  const r=await fetch(`${APP_CONFIG.bansheeAgentBase}/health`,{headers:{'Accept':'application/json'}});
+  if(!r.ok)throw new Error(`Banshee agent health check failed (${r.status})`);
+  return r.json();
+}
+
+function currentGreenfieldObjectId(){
+  return String(document.getElementById('greenfieldObjectId')?.value||'').trim();
+}
+
+function createVerificationIdentity(payload){
+  const contentId=payload.audiusContentId||`${payload.assetType}-${Date.now()}`;
+  return {
+    launchId:String(contentId),
+    tokenId:String(contentId)
+  };
+}
+
+async function verifyLaunchWithBanshee(payload){
+  const greenfieldObjectId=currentGreenfieldObjectId();
+  if(!greenfieldObjectId)throw new Error('Enter the BNB Greenfield object ID for this release');
+
+  const identity=createVerificationIdentity(payload);
+  const verificationRequest={
+    chain:CONFIG.agentChain,
+    launchId:identity.launchId,
+    assetContract:CONFIG.bansheeHook,
+    tokenId:identity.tokenId,
+    greenfieldObjectId
+  };
+
+  const r=await fetch(`${APP_CONFIG.bansheeAgentBase}/verify`,{
+    method:'POST',
+    headers:{'Content-Type':'application/json','Accept':'application/json'},
+    body:JSON.stringify(verificationRequest)
+  });
+
+  const data=await r.json().catch(()=>({}));
+  if(!r.ok)throw new Error(data?.error||data?.message||`Banshee verification failed (${r.status})`);
+  return {request:verificationRequest,response:data};
 }
 
 async function submitLaunchRequest(){
@@ -397,6 +442,7 @@ async function submitLaunchRequest(){
   if(!isEventAsset && !audiusUser){showToast('Connect your Audius artist account first');return}
   if(!isEventAsset && !selectedAudiusRelease){showToast('Select a song or album from your Audius catalog');return}
   if(isEventAsset && !ticketFile){showToast('Upload performance or ticket details first');return}
+  if(!currentGreenfieldObjectId()){showToast('Enter the BNB Greenfield object ID first');return}
   if(!account){const connected=await connectWallet();if(!connected)return}
 
   const payload={
@@ -411,29 +457,60 @@ async function submitLaunchRequest(){
     audiusHandle:audiusUser?.handle||null,
     audiusContentId:selectedAudiusRelease?.id||null,
     audiusContentType:selectedAudiusRelease?.type||null,
+    greenfieldObjectId:currentGreenfieldObjectId(),
+    chain:CONFIG.agentChain,
+    hookAddress:CONFIG.bansheeHook,
     wallet:account
   };
 
   if(!payload.supply||payload.supply<1){showToast('Enter a valid supply');return}
+
   try{
-    const r=await fetch(`${CONFIG.backendBase}/api/agent/launch-request`,{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify(payload)
-    });
-    if(!r.ok)throw new Error('Backend not connected');
-    showToast('Audius release submitted to Banshee AI for launch');
+    showToast('Checking The Banshee AI agent...');
+    await checkBansheeAgentHealth();
+
+    showToast('The Banshee is verifying Greenfield + market evidence...');
+    const verification=await verifyLaunchWithBanshee(payload);
+    const attestation=verification.response?.attestation;
+
+    if(!attestation){
+      throw new Error('The Banshee returned no attestation');
+    }
+
+    if(!attestation.verified){
+      const why=(attestation.reasons||[]).join(', ')||'verification requirements were not met';
+      showToast(`Banshee rejected launch: ${why}`);
+      console.warn('Banshee negative attestation',verification.response);
+      return;
+    }
+
+    payload.bansheeAttestation=verification.response.attestation;
+    payload.bansheeSigned=verification.response.signed;
+
+    if(APP_CONFIG.backendBase){
+      const r=await fetch(`${APP_CONFIG.backendBase}/api/agent/launch-request`,{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify(payload)
+      });
+      if(!r.ok)throw new Error('Launch backend rejected the verified request');
+      showToast('Banshee verified Greenfield + Audius release and submitted launch');
+    }else{
+      console.log('Banshee verified launch payload',payload);
+      showToast('Banshee verified release — launch payload ready');
+    }
   }catch(e){
-    console.warn(e);
-    showToast('Demo: Audius release + launch parameters prepared');
+    console.error('Banshee launch verification error',e);
+    showToast(e?.message||'Banshee verification failed');
   }
 }
+
 function previewLaunch(id){const x=findLaunch(id);if(!x)return;currentTrack=Math.max(0,launches.indexOf(x));document.getElementById('nowTitle').textContent=x.title;document.getElementById('nowArtist').textContent=x.artistName;showToast(`${x.title} preview selected`)}
 function nextTrack(){if(!launches.length)return;currentTrack=(currentTrack+1)%launches.length;previewLaunch(launches[currentTrack].id)} function previousTrack(){if(!launches.length)return;currentTrack=(currentTrack-1+launches.length)%launches.length;previewLaunch(launches[currentTrack].id)}
 function togglePlayback(){playing=!playing;document.getElementById('playPauseBtn').textContent=playing?'⏸':'▶';document.querySelectorAll('.bar').forEach(b=>b.style.animationPlayState=playing?'running':'paused');showToast(playing?'Preview started':'Preview paused')}
 const wave=document.getElementById('wave');for(let i=0;i<58;i++){const b=document.createElement('span');b.className='bar';b.style.animationDelay=`${Math.random()*1.2}s`;wave.appendChild(b)}
 const sprayColors=['#04d9ff','#ff2f86','#ff6a20','#7a37ff','#ffd441'];function sprayBurst(x,y){for(let i=0;i<7;i++){const d=document.createElement('span');d.className='paint-dot';d.style.setProperty('--paint',sprayColors[i%sprayColors.length]);d.style.left=`${x+(Math.random()-.5)*90}px`;d.style.top=`${y+(Math.random()-.5)*70}px`;document.body.appendChild(d);setTimeout(()=>d.remove(),1400)}}window.addEventListener('click',e=>sprayBurst(e.clientX,e.clientY));
-renderLaunches();restoreAudiusSession();if(window.ethereum)window.ethereum.on?.('accountsChanged',()=>location.reload());
+applyActiveChain(activeChainKey);renderLaunches();restoreAudiusSession();checkBansheeAgentHealth().then(()=>console.log('The Banshee AI agent is online')).catch(e=>console.warn('The Banshee AI agent is offline',e));if(window.ethereum){window.ethereum.on?.('accountsChanged',()=>location.reload());window.ethereum.on?.('chainChanged',chainId=>{const id=String(chainId).toLowerCase();const found=Object.entries(CHAINS).find(([,c])=>c.chainIdHex.toLowerCase()===id);if(found){applyActiveChain(found[0]);provider=null;signer=null;if(account&&hasHook())loadChainLaunches().catch(console.warn);else{launches=[...DEMO_LAUNCHES];renderLaunches()}}})}
 </script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body></html>
